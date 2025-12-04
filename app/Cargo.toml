@@ -1,0 +1,9 @@
+[package]
+name = "mini-reddit-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gstd = "=1.8"
+sails-rs = "=0.8.0"
+session-service = { git = "https://github.com/gear-foundation/signless-gasless-session-service.git", rev = "8e482f4" }

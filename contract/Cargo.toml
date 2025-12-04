@@ -1,0 +1,15 @@
+[package]
+name = "mini-reddit-contract"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gstd = "1.6.3"
+mini-reddit-io = { path = "../io" }
+
+[build-dependencies]
+gear-wasm-builder = "1.6.3"
+mini-reddit-io = { path = "../io" }
+
+[features]
+default = []

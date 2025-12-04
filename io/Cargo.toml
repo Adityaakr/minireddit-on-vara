@@ -1,0 +1,13 @@
+[package]
+name = "mini-reddit-io"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gstd = { version = "1.6.3", default-features = false }
+gmeta = { version = "1.6.3", default-features = false }
+parity-scale-codec = { version = "3", default-features = false }
+scale-info = { version = "2", default-features = false }
+
+[dev-dependencies]
+gmeta = "1.6.3"

@@ -1,0 +1,446 @@
+import { useState, useEffect, useMemo } from 'react';
+import { useAccount, useApi } from '@gear-js/react-hooks';
+import { Button } from '@gear-js/vara-ui';
+import { SailsProgram } from '@/app/utils/src/lib';
+import { ENV } from '@/consts';
+import { GearKeyring } from '@gear-js/api';
+import './mini-reddit.scss';
+
+interface Post {
+  id: bigint;
+  author: string;
+  text: string;
+  created_at: bigint;
+  upvotes: number;
+}
+
+interface SessionData {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  keyring: any;
+  address: string;
+  publicKey: string;
+  account: string;
+  expires: number;
+  allowedActions: string[];
+}
+
+export function MiniReddit() {
+  const { api, isApiReady } = useApi();
+  const { account } = useAccount();
+  
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [newPostText, setNewPostText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Debug logging
+  console.log('MiniReddit render:', { 
+    isApiReady, 
+    api: !!api, 
+    programId: ENV.PROGRAM_ID,
+    node: ENV.NODE 
+  });
+
+  const program = useMemo(() => {
+    if (api && ENV.PROGRAM_ID) {
+      return new SailsProgram(api, ENV.PROGRAM_ID as `0x${string}`);
+    }
+    return null;
+  }, [api]);
+  
+  console.log('Program initialized:', !!program);
+
+  // Load posts from blockchain
+  const loadPosts = async () => {
+    if (!program || !api) {
+      console.log('Program or API not initialized, skipping load');
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Loading posts from program:', program.programId);
+      
+      // CRITICAL: The allowed_actions must be the enum variants, not strings
+      // The contract expects ActionsForSession enum
+      const { decodeAddress } = await import('@gear-js/api');
+      const sessionKeyBytes = decodeAddress(keyring.address);
+      
+      // Create the signature data with the session key
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const signatureData: any = {
+        key: sessionKeyBytes,
+        duration: duration,
+        allowed_actions: ['CreatePost', 'ToggleUpvote']
+      };
+
+      console.log('Creating session with data:', {
+        sessionKeyAddress: keyring.address,
+        sessionKeyBytes: Buffer.from(sessionKeyBytes).toString('hex'),
+        forAccount: account.address,
+        forAccountBytes: Buffer.from(account.decodedAddress).toString('hex'),
+        duration
+      });
+
+      // Create session on contract (user signs once)
+      // Signature is optional (null) - the transaction itself proves authorization
+      const transaction = program.session.createSession(signatureData, null);
+      
+      console.log('Transaction created, calculating gas...');
+      
+      // Use a high gas limit for session creation (it's a complex operation)
+      const gasLimit = api.blockGasLimit.toBigInt() / BigInt(2); // Use 50% of block gas limit
+      
+      // Send transaction and capture events
+      let txFailed = false;
+      let txError = '';
+      
+      await transaction
+        .withAccount(account.address, { signer: account.signer })
+        .withGas(gasLimit)
+        .signAndSend()
+        .catch((err: Error) => {
+          txFailed = true;
+          txError = err.message;
+          console.error('❌ Transaction failed:', err);
+        });
+
+      if (txFailed) {
+        throw new Error(`Session creation transaction failed: ${txError}`);
+      }
+
+      console.log('✅ Session transaction sent!');
+      console.log('Waiting 10 seconds for blockchain confirmation...');
+      
+      // Wait longer for transaction to be finalized
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      
+      console.log('Session should be confirmed on-chain now!');
+      
+      console.log('Session should be created now. Verifying...');
+      
+      // Try to query the session to verify it exists
+      try {
+        const sessionQuery = await program.session.sessionForTheAccount(account.decodedAddress).call();
+        console.log('✅ Session verification SUCCESS:', sessionQuery);
+        
+        if (!sessionQuery) {
+          throw new Error('Session was not created on-chain!');
+        }
+        
+        // Verify the session key matches
+        console.log('Session key from contract:', sessionQuery);
+        console.log('Our session key:', Buffer.from(sessionKeyBytes).toString('hex'));
+      } catch (err) {
+        console.error('❌ Could not verify session:', err);
+        throw new Error('Session creation failed - please try again');
+      }
+
+      // Save session locally
+      const sessionData = {
+        keyring: keyring.toJson(),
+        address: keyring.address,
+        publicKey: keyring.address, // Store the session key address
+        account: account.address,
+        expires: Date.now() + duration,
+        allowedActions: ['CreatePost', 'ToggleUpvote']
+      };
+      
+      localStorage.setItem('miniRedditSession', JSON.stringify(sessionData));
+      setSessionKey(sessionData);
+      setSignlessEnabled(true);
+      
+      console.log('✅ Session created successfully!');
+    } catch (err) {
+      console.error('Failed to create session:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create session');
+    } finally {
+      setCreatingSession(false);
+    }
+  };
+
+  // Delete session
+  const deleteSession = async () => {
+    if (!program || !account) return;
+
+    try {
+      setLoading(true);
+      
+      // Delete from contract
+      const transaction = program.session.deleteSessionFromAccount();
+      await transaction
+        .withAccount(account.address, { signer: account.signer })
+        .calculateGas()
+        .then((tx: { signAndSend: () => Promise<unknown> }) => tx.signAndSend());
+
+      // Clear local storage
+      localStorage.removeItem('miniRedditSession');
+      setSessionKey(null);
+      setSignlessEnabled(false);
+      
+      console.log('✅ Session deleted');
+    } catch (err) {
+      console.error('Failed to delete session:', err);
+      // Even if contract deletion fails, clear local state
+      localStorage.removeItem('miniRedditSession');
+      setSessionKey(null);
+      setSignlessEnabled(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Force clear session (for debugging)
+  const forceClearSession = () => {
+    localStorage.removeItem('miniRedditSession');
+    setSessionKey(null);
+    setSignlessEnabled(false);
+    console.log('🔧 Session force cleared');
+  };
+
+  // Load posts from blockchain
+  const loadPosts = async () => {
+    if (!program || !api) {
+      console.log('Program or API not initialized, skipping load');
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Loading posts from program:', program.programId);
+      
+      // Query all posts from blockchain
+      const result = await program.miniReddit.getAllPosts().call();
+      console.log('Posts from blockchain:', result);
+      console.log('Number of posts:', result.length);
+      
+      // Format posts
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const formattedPosts: Post[] = result.map((p: any) => ({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+        id: BigInt(p.id),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        author: `0x${Buffer.from(p.author).toString('hex')}`,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        text: p.text,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+        created_at: BigInt(p.created_at),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        upvotes: Number(p.upvotes)
+      }));
+      
+      setPosts(formattedPosts);
+      setError(null);
+    } catch (err) {
+      console.error('Failed to load posts:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load posts';
+      console.error('Error details:', errorMessage);
+      // Don't show error, just show empty state
+      setPosts([]);
+      setError(null); // Hide error message, just show "No posts yet"
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    console.log('useEffect triggered, program:', !!program);
+    if (program) {
+      void loadPosts();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [program]);
+
+  // Create post
+  const handleCreatePost = async () => {
+    if (!program || !account) {
+      setError('Please connect your wallet');
+      return;
+    }
+
+    if (!newPostText.trim()) {
+      setError('Post text cannot be empty');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Create post with normal wallet signing
+      const transaction = program.miniReddit.createPost(newPostText, null);
+      
+      await transaction
+        .withAccount(account.address, { signer: account.signer })
+        .calculateGas()
+        .then((tx: { signAndSend: () => Promise<unknown> }) => tx.signAndSend());
+
+      setNewPostText('');
+      
+      // Reload posts after a short delay
+      setTimeout(() => { void loadPosts(); }, 2000);
+    } catch (err) {
+      console.error('Failed to create post:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create post');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Toggle upvote
+  const handleToggleUpvote = async (postId: bigint) => {
+    if (!program || !account) {
+      setError('Please connect your wallet');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Upvote with normal wallet signing
+      const transaction = program.miniReddit.toggleUpvote(postId, null);
+      
+      await transaction
+        .withAccount(account.address, { signer: account.signer })
+        .calculateGas()
+        .then((tx: { signAndSend: () => Promise<unknown> }) => tx.signAndSend());
+
+      // Reload posts after a short delay
+      setTimeout(() => { void loadPosts(); }, 2000);
+    } catch (err) {
+      console.error('Failed to toggle upvote:', err);
+      setError(err instanceof Error ? err.message : 'Failed to toggle upvote');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatAddress = (address: string) => {
+    if (address.length < 13) return address;
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatTimestamp = (timestamp: bigint) => {
+    const date = new Date(Number(timestamp));
+    return date.toLocaleString();
+  };
+
+  // Show loading if API is not ready
+  if (!isApiReady) {
+    return (
+      <div className="mini-reddit" style={{ padding: '2rem', textAlign: 'center' }}>
+        <div className="mini-reddit__loading" style={{ background: '#1a1a1a', padding: '3rem', borderRadius: '12px' }}>
+          <h2 style={{ color: '#00ffc4', marginBottom: '1rem' }}>🔄 Connecting to Vara Network...</h2>
+          <p style={{ color: '#8b8b8b' }}>Please wait while we connect to the blockchain</p>
+          <p style={{ color: '#666', marginTop: '1rem', fontSize: '0.9rem' }}>
+            Network: {ENV.NODE || 'Not configured'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!ENV.PROGRAM_ID) {
+    return (
+      <div className="mini-reddit">
+        <div className="error-message">
+          <h2>⚠️ Program ID Not Set</h2>
+          <p>Please set VITE_PROGRAM_ID in your .env file</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mini-reddit">
+      <header className="mini-reddit__header">
+        <h1>🗣️ Mini Reddit on Vara</h1>
+        <p>Decentralized forum powered by Vara Network</p>
+      </header>
+
+      {error && (
+        <div className="mini-reddit__error">
+          {error}
+        </div>
+      )}
+
+      {/* Create Post Section */}
+      <section className="mini-reddit__create">
+        <h2>Create a Post</h2>
+        <textarea
+          className="mini-reddit__textarea"
+          placeholder="What's on your mind? (max 280 characters)"
+          value={newPostText}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewPostText(e.target.value)}
+          maxLength={280}
+          disabled={loading || !account}
+        />
+        <div className="mini-reddit__create-footer">
+          <span className="mini-reddit__char-count">
+            {newPostText.length}/280
+          </span>
+          <Button
+            text={loading ? 'Posting...' : 'Post'}
+            onClick={handleCreatePost}
+            disabled={loading || !account || !newPostText.trim()}
+          />
+        </div>
+        {!account && (
+          <p className="mini-reddit__connect-hint">
+            👆 Connect your wallet to create posts
+          </p>
+        )}
+      </section>
+
+      {/* Posts List */}
+      <section className="mini-reddit__posts">
+        <div className="mini-reddit__posts-header">
+          <h2>Recent Posts</h2>
+          <Button
+            text="🔄 Refresh"
+            onClick={loadPosts}
+            disabled={loading}
+            color="grey"
+          />
+        </div>
+
+        {loading && posts.length === 0 ? (
+          <div className="mini-reddit__loading">Loading posts...</div>
+        ) : posts.length === 0 ? (
+          <div className="mini-reddit__empty">
+            <p>No posts yet. Be the first to post!</p>
+          </div>
+        ) : (
+          <div className="mini-reddit__posts-list">
+            {posts.map((post) => (
+              <article key={post.id.toString()} className="mini-reddit__post">
+                <div className="mini-reddit__post-header">
+                  <span className="mini-reddit__post-author">
+                    👤 {formatAddress(post.author)}
+                  </span>
+                  <span className="mini-reddit__post-time">
+                    🕐 {formatTimestamp(post.created_at)}
+                  </span>
+                </div>
+                <p className="mini-reddit__post-text">{post.text}</p>
+                <div className="mini-reddit__post-footer">
+                  <Button
+                    text={`👍 ${post.upvotes}`}
+                    onClick={() => handleToggleUpvote(post.id)}
+                    disabled={loading || !account}
+                    color="grey"
+                  />
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}

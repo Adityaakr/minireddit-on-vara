@@ -1,0 +1,23 @@
+import { useApi, useAccount } from '@gear-js/react-hooks';
+
+import { Header, Footer, ApiLoader } from '@/components';
+import { withProviders } from '@/hocs';
+import { Routing } from '@/pages';
+import './App.scss';
+
+function Component() {
+  const { isApiReady } = useApi();
+  const { isAccountReady } = useAccount();
+
+  const isAppReady = isApiReady && isAccountReady;
+
+  return (
+    <div className="app-shell">
+      <Header />
+      <main className="app-main">{isAppReady ? <Routing /> : <ApiLoader />}</main>
+      <Footer />
+    </div>
+  );
+}
+
+export const App = withProviders(Component);

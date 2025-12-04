@@ -1,0 +1,13 @@
+[package]
+name = "mini-reddit-state"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mini-reddit-io = { path = "../io" }
+gstd = { version = "1.6.3", default-features = false }
+
+[build-dependencies]
+gear-wasm-builder = "1.6.3"
+gmeta = "1.6.3"
+mini-reddit-io = { path = "../io" }

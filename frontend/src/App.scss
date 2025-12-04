@@ -1,0 +1,13 @@
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 0 32px;
+  position: relative;
+}
+
+.app-main {
+  flex: 1;
+  padding-top: 8px;
+}

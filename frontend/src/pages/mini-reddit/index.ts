@@ -1,0 +1,1 @@
+export { MiniReddit } from './MiniReddit';

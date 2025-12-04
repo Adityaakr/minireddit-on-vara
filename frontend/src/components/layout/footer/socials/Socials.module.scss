@@ -1,0 +1,8 @@
+.socials {
+  display: flex;
+  margin-right: 20px;
+
+  & > *:not(:last-child) {
+    margin-right: 24px;
+  }
+}
