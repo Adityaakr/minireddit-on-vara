@@ -2,23 +2,50 @@
 
 .loader {
   @include absoluteCenter;
-  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  &::before {
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(22, 163, 74, 0.1);
+  }
 
   &::after {
-    content: '.';
-    width: 1em;
-    display: inline-block;
-    text-align: left;
-    animation: ellipsis 1.25s infinite;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top-color: #16a34a;
+    border-right-color: #16a34a;
+    animation: spin 0.7s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
   }
 }
 
-@keyframes ellipsis {
-  33% {
-    content: '..';
-  }
+.text {
+  font-size: 17px;
+  font-weight: 600;
+  color: #0f1419;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
 
-  66% {
-    content: '...';
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
