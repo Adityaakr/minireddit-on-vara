@@ -1,9 +1,4 @@
-use std::{
-    env,
-    fs::File,
-    io::{BufRead, BufReader},
-    path::PathBuf,
-};
+use std::env;
 
 fn main() {
     sails_rs::build_wasm();
@@ -12,9 +7,9 @@ fn main() {
         return;
     }
 
-    let idl_file_path = "mini_reddit_vara.idl";
+    let idl_file_path = "vibepost.idl";
 
-    sails_idl_gen::generate_idl_to_file::<mini_reddit_app::MiniRedditProgram>(idl_file_path)
+    sails_idl_gen::generate_idl_to_file::<vibepost_app::VibePostProgram>(idl_file_path)
         .unwrap();
 
     println!("cargo:rerun-if-changed=app/src");

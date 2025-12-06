@@ -1,3 +1,7 @@
-const copyToClipboard = (value: string) => navigator.clipboard.writeText(value).then(() => console.log('Copied!'));
+export { uploadToIPFS, getIPFSUrl, compressImage } from './ipfs';
+export { createSessionSignature, hexToUint8Array } from './session';
 
-export { copyToClipboard };
+export function formatAddress(address: string): string {
+  if (address.length < 13) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}

@@ -3,21 +3,21 @@ members = ["app", "client"]
 resolver = "2"
 
 [package]
-name = "mini-reddit-vara"
+name = "vibepost"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-mini-reddit-app = { path = "app" }
+vibepost-app = { path = "app" }
 
 [build-dependencies]
 sails-rs = { version = "0.8.0", features = ["wasm-builder"] }
 sails-idl-gen = "0.8.0"
-mini-reddit-app = { path = "app" }
+vibepost-app = { path = "app" }
 
 [dev-dependencies]
-mini-reddit-vara = { path = ".", features = ["wasm-binary"] }
-mini-reddit-client = { path = "client" }
+vibepost = { path = ".", features = ["wasm-binary"] }
+vibepost-client = { path = "client" }
 sails-rs = { version = "0.8.0", features = ["gtest"] }
 tokio = { version = "1.41", features = ["rt", "macros"] }
 

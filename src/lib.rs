@@ -1,7 +1,7 @@
 #![no_std]
 
 #[cfg(target_arch = "wasm32")]
-pub use mini_reddit_app::wasm::*;
+pub use vibepost_app::wasm::*;
 
 #[cfg(feature = "wasm-binary")]
 #[cfg(not(target_arch = "wasm32"))]

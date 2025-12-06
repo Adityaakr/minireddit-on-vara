@@ -1,115 +1,124 @@
-# 🚀 Mini-Reddit Vara dApp
+# 🚀 VibePost - Decentralized Social Network on Vara
 
-A decentralized Reddit-like forum built on the Vara Network where users can create posts and upvote content.
+A decentralized social media platform built on the Vara Network where users can create posts, comment, upvote, and earn $VIBES rewards for their engagement.
 
-## Features
+![VibePost](https://img.shields.io/badge/VibePost-Vara%20Network-green)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-- ✍️ **Create Posts**: Any user can create text posts (max 280 characters)
-- 👍 **Toggle Upvotes**: One upvote per user per post (click again to remove)
+## ✨ Features
+
+- 📝 **Create Posts**: Share your thoughts with up to 500 characters
+- 💬 **Comments & Replies**: Engage in conversations with nested comment threads
+- 👍 **Upvote System**: Show appreciation for posts and comments
+- 💰 **$VIBES Rewards**: Earn tokens for your activity:
+  - 50 $VIBES for creating a post
+  - 25 $VIBES for commenting
+  - 10 $VIBES for upvoting posts/comments
+- 👤 **User Profiles**: Customize your profile with username, handle, avatar, and bio
+- 🖼️ **Image Support**: Upload images to posts and comments via IPFS
+- 📊 **Leaderboard**: Track your $VIBES earnings and activity stats
 - 🔐 **Wallet Integration**: Connect with Polkadot.js extension
-- 🎨 **Modern UI**: Beautiful, responsive interface with TailwindCSS
-- ⚡ **Real-time Updates**: Automatic state refresh
 
-## Project Structure
+## 🏗️ Architecture
 
 ```
-kudos-wall-vara/
-├── io/                    # Type definitions and metadata
-│   ├── src/lib.rs        # Action, Event, and State types
+┌─────────────────────────────────────────────────────────────┐
+│                      Frontend (React)                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │   Posts UI   │  │  Comments UI │  │  Profile UI  │     │
+│  └──────────────┘  └──────────────┘  └──────────────┘     │
+│                                                              │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │         @gear-js/api + Sails Client                 │   │
+│  └────────────────────────────────────────────────────┘   │
+└───────────────────────┬─────────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Vara Network (Blockchain)                │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │         VibePost Smart Contract (Rust/Sails)         │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │  │
+│  │  │ MiniReddit   │  │   Session    │  │  State   │  │  │
+│  │  │  Service     │  │   Service    │  │  Query   │  │  │
+│  │  └──────────────┘  └──────────────┘  └──────────┘  │  │
+│  └──────────────────────────────────────────────────────┘  │
+└───────────────────────┬─────────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    IPFS (Pinata)                             │
+│              Image Storage & Retrieval                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+### Smart Contract
+- **Rust** with **Sails Framework** (v0.8.0)
+- **Gear Protocol** for blockchain execution
+- **Session Service** for signless transactions (optional)
+
+### Frontend
+- **React 19** with **TypeScript**
+- **Vite** for fast builds
+- **SCSS** for styling
+- **@gear-js/api** for blockchain interaction
+- **Sails Client** for type-safe contract calls
+- **IPFS/Pinata** for image storage
+
+## 📦 Project Structure
+
+```
+vibepost/
+├── app/                    # Smart contract (Sails)
+│   ├── src/lib.rs         # Main contract logic
 │   └── Cargo.toml
-├── contract/             # Smart contract
-│   ├── src/lib.rs       # Main contract logic
-│   ├── build.rs         # Build script
-│   └── Cargo.toml
-├── frontend/            # React frontend
+├── client/                 # Generated TypeScript client
+├── frontend/               # React frontend
 │   ├── src/
-│   │   ├── App.tsx     # Main application
-│   │   ├── main.tsx    # Entry point
-│   │   └── index.css   # Styles
-│   ├── package.json
-│   └── vite.config.ts
-└── Cargo.toml          # Workspace configuration
+│   │   ├── pages/         # Page components
+│   │   ├── components/    # Reusable components
+│   │   └── utils/         # Utilities (IPFS, etc.)
+│   └── package.json
+├── vibepost.idl           # Interface definition (auto-generated)
+└── Cargo.toml            # Workspace configuration
 ```
 
-## Smart Contract
-
-### Actions
-
-```rust
-pub enum Action {
-    CreatePost { text: String },
-    ToggleUpvote { post_id: u64 },
-}
-```
-
-### Events
-
-```rust
-pub enum Event {
-    PostCreated { post_id: u64 },
-    UpvoteToggled { post_id: u64, upvotes: u32, is_upvoted: bool },
-    Error { message: String },
-}
-```
-
-### State
-
-```rust
-pub struct ForumView {
-    pub posts: Vec<PostView>,
-}
-
-pub struct PostView {
-    pub id: u64,
-    pub author: ActorId,
-    pub text: String,
-    pub created_at: u64,
-    pub upvotes: u32,
-}
-```
-
-## Build & Deploy
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Rust toolchain (1.91+)
-- Node.js and npm/yarn
-- Polkadot.js browser extension
+- **Rust** (1.91+)
+- **Node.js** (18+)
+- **Polkadot.js Extension** (for wallet)
 
-### Build the Contract
+### 1. Clone Repository
 
 ```bash
-# Build with Sails (automatically generates IDL)
+git clone https://github.com/yourusername/vibepost.git
+cd vibepost
+```
+
+### 2. Build Smart Contract
+
+```bash
+# Build the contract
 cargo build --release
 
 # Output files:
-# - mini_reddit_vara.idl (Interface definition)
-# - target/wasm32-gear/release/mini_reddit_vara.opt.wasm (Optimized WASM)
-# - target/wasm32-gear/release/mini_reddit_vara.wasm (Regular WASM)
+# - vibepost.idl (Interface definition)
+# - target/wasm32-gear/release/vibepost.opt.wasm (Optimized WASM)
 ```
 
-✅ **This project uses Sails framework** - IDL and optimized WASM are automatically generated!
+### 3. Deploy Contract
 
-### Files Generated
+1. Go to [Gear IDEA](https://idea.gear-tech.io/)
+2. Connect your wallet
+3. Upload `target/wasm32-gear/release/vibepost.opt.wasm`
+4. Copy the Program ID
 
-After building, you'll have:
-- `mini_reddit_vara.idl` - Interface definition (auto-generated)
-- `target/wasm32-gear/release/mini_reddit_vara.opt.wasm` - Optimized WASM (31KB)
-- `target/wasm32-gear/release/mini_reddit_vara.wasm` - Regular WASM (47KB)
-
-### Deploy to Vara Network
-
-1. **Go to Gear IDEA**: https://idea.gear-tech.io/
-2. **Connect Wallet**: Use Polkadot.js extension
-3. **Upload Program**:
-   - Click "Upload Program"
-   - Select `target/wasm32-gear/release/mini_reddit_vara.opt.wasm`
-   - **Metadata**: Upload `mini_reddit_vara.idl` (auto-detected)
-   - Init payload: Leave empty or `null`
-   - Submit transaction
-4. **Copy Program ID**: Save the deployed program ID
-
-### Setup Frontend
+### 4. Setup Frontend
 
 ```bash
 cd frontend
@@ -117,167 +126,112 @@ cd frontend
 # Install dependencies
 npm install
 
-# Create environment file
-cp .env.example .env
-
-# Edit .env and add your program ID
-# VITE_PROGRAM_ID=0x...your_program_id_here
+# Create .env file
+cat > .env << EOF
+VITE_NODE_ADDRESS=wss://testnet.vara.network
+VITE_PROGRAM_ID=0x...your_program_id_here
+VITE_PINATA_API_KEY=your_pinata_api_key
+VITE_PINATA_SECRET_KEY=your_pinata_secret_key
+VITE_PINATA_JWT=your_pinata_jwt
+VITE_PINATA_GATEWAY=https://gateway.pinata.cloud/ipfs/
+EOF
 
 # Start development server
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:3000`
+## 🌐 Deployment
 
-## Usage
+### Vercel Deployment
 
-### Connect Wallet
+1. **Import Project** to Vercel
+2. **Set Root Directory**: `frontend`
+3. **Add Environment Variables**:
+   - `VITE_NODE_ADDRESS`
+   - `VITE_PROGRAM_ID`
+   - `VITE_PINATA_API_KEY`
+   - `VITE_PINATA_SECRET_KEY`
+   - `VITE_PINATA_JWT`
+   - `VITE_PINATA_GATEWAY`
+4. **Deploy**
 
-1. Install [Polkadot.js Extension](https://polkadot.js.org/extension/)
-2. Create or import an account
-3. Click "Connect Wallet" in the app
-4. Approve the connection
+See `VERCEL_DEPLOYMENT.md` for detailed instructions.
 
-### Create a Post
+## 💡 How It Works
 
-1. Connect your wallet
-2. Type your message (max 280 characters)
-3. Click "Post" or press Enter
-4. Wait for transaction confirmation
-5. Your post will appear in the feed
+### Post Creation Flow
+1. User writes post (max 500 chars) and optionally uploads image
+2. Image uploaded to IPFS via Pinata
+3. Transaction sent to VibePost contract
+4. Contract validates and stores post
+5. User earns 50 $VIBES (tracked locally)
+6. Post appears in feed
 
-### Upvote Posts
+### Comment System
+- Users can comment on posts
+- Nested replies supported (unlimited depth)
+- Each comment earns 25 $VIBES
+- Upvoting comments earns 10 $VIBES
 
-1. Click the upvote arrow on any post
-2. Confirm the transaction
-3. Click again to remove your upvote
+### Profile System
+- Customizable username, handle, avatar, and bio
+- Profiles stored on-chain
+- Avatar images stored on IPFS
+- Profile data displayed in posts and comments
 
-## Network Configuration
+### $VIBES Rewards
+- **Posts**: 50 $VIBES per post
+- **Comments**: 25 $VIBES per comment
+- **Upvotes**: 10 $VIBES per upvote (posts or comments)
+- Rewards tracked locally per user per contract deployment
 
-**Vara Testnet RPC**: `wss://testnet.vara.network`
+## 📊 Contract Services
 
-To get test tokens:
-1. Join [Vara Discord](https://discord.gg/vara-network)
-2. Use the faucet bot to get testnet tokens
+### MiniReddit Service
+- `createPost(text, image_uri, session_for_account)` - Create a new post
+- `toggleUpvote(post_id, session_for_account)` - Toggle upvote on post
+- `createComment(post_id, parent_id, text, image_uri, session_for_account)` - Add comment
+- `toggleCommentUpvote(comment_id, session_for_account)` - Toggle comment upvote
+- `updateProfile(username, social_handle, description, avatar_uri, session_for_account)` - Update profile
+- `getAllPosts()` - Query all posts
+- `getCommentsForPost(post_id)` - Query comments for a post
+- `getProfile(wallet)` - Query user profile
+- `getVibesBalance(wallet)` - Query user's vibes balance
 
-## Development
+### Session Service
+- `createSession(signature_data, signature)` - Create signless session
+- `deleteSessionFromAccount()` - Delete user's session
+- `sessionForTheAccount(account)` - Query session data
 
-### Contract Testing
+## 🔒 Security
 
-```bash
-# Run tests
-cd contract
-cargo test
-```
-
-### Frontend Development
-
-```bash
-cd frontend
-
-# Development mode with hot reload
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-## Tech Stack
-
-### Smart Contract
-- **Gear Protocol**: Smart contract platform
-- **gstd**: Gear standard library
-- **Rust**: Programming language
-
-### Frontend
-- **React 18**: UI framework
-- **TypeScript**: Type safety
-- **Vite**: Build tool
-- **TailwindCSS**: Styling
-- **@gear-js/api**: Gear API client
-- **@polkadot/extension-dapp**: Wallet integration
-- **Lucide React**: Icons
-
-## Contract Logic Highlights
-
-### Post Creation
-- Validates text is not empty
-- Enforces 280 character limit
-- Stores author, timestamp, and content
-- Emits `PostCreated` event
-
-### Upvote Toggle
-- One vote per user per post
-- Tracks votes in `BTreeMap<(post_id, voter), ()>`
-- Increments/decrements upvote count
-- Emits `UpvoteToggled` event with current state
-
-### State Query
-- Returns all posts with metadata
-- Sorted by creation time
-- Includes upvote counts
-
-## Security Considerations
-
-- ✅ Input validation (text length, empty checks)
-- ✅ Overflow protection (saturating arithmetic)
+- ✅ Input validation (text length limits)
+- ✅ Overflow protection
 - ✅ One vote per user enforcement
-- ✅ Immutable post content
-- ✅ No admin privileges required
+- ✅ Immutable post/comment content
+- ✅ Session-based authorization (optional)
+- ✅ IPFS content addressing
 
-## Sails Framework
-
-This project uses the **Sails framework** for automatic IDL generation and better tooling:
-
-### ✅ Benefits
-- **Automatic IDL generation** - No manual interface definitions
-- **Optimized WASM** - `.opt.wasm` generated automatically
-- **Type-safe** - Strong typing for services and methods
-- **Better tooling** - Client generation, testing support
-- **Structured** - Service-based architecture
-
-### 📝 IDL File
-
-The `mini_reddit_vara.idl` file is automatically generated and describes:
-```idl
-service MiniReddit {
-  CreatePost : (text: str) -> result (u64, str);
-  ToggleUpvote : (post_id: u64) -> result (struct { u32, bool }, str);
-  query GetAllPosts : () -> vec Post;
-};
-```
-
-This file is used by:
-- Gear IDEA for UI generation
-- Frontend clients for type safety
-- Documentation tools
-
-## Future Enhancements
-
-- 💬 Comments on posts
-- 🏷️ Tags and categories
-- 🔍 Search functionality
-- 👤 User profiles
-- 📊 Sorting (hot, new, top)
-- ⏰ Time-based post expiry
-- 🎯 Downvotes
-- 🔄 Migrate to Sails for automatic IDL generation
-
-## License
+## 📝 License
 
 MIT
 
-## Resources
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 🔗 Resources
 
 - [Vara Network Docs](https://wiki.vara.network/)
 - [Gear Protocol](https://gear-tech.io/)
-- [Polkadot.js](https://polkadot.js.org/)
+- [Sails Framework](https://github.com/gear-foundation/sails-rs)
 - [Gear IDEA](https://idea.gear-tech.io/)
+- [Pinata IPFS](https://www.pinata.cloud/)
+
+## 📧 Contact
+
+Built with ❤️ on Vara Network
 
 ---
 
-Built with ❤️ on Vara Network
-# minireddit-on-vara
+**Note**: This project uses the Sails framework for automatic IDL generation and optimized WASM builds.

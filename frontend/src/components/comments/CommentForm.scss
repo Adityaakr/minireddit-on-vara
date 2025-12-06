@@ -1,0 +1,119 @@
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #eff3f4;
+
+  &__textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid #eff3f4;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #16a34a;
+    }
+
+    &:disabled {
+      background: #f9fafb;
+      cursor: not-allowed;
+    }
+  }
+
+  &__image-preview {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__remove-image {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__file-label {
+    cursor: pointer;
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+
+    &:hover {
+      background: #f0fdf4;
+    }
+
+    &:has(+ input:disabled) {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__char-count {
+    font-size: 13px;
+    color: #536471;
+    font-weight: 500;
+    margin-right: 4px;
+  }
+}
+

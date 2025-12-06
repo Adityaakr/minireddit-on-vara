@@ -25,4 +25,4 @@ function Logo() {
   );
 }
 
-export { Logo };
+export default Logo;

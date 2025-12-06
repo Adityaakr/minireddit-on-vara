@@ -1,0 +1,55 @@
+.comment-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eff3f4;
+
+  &__header {
+    margin-bottom: 16px;
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f0fdf4;
+      color: #16a34a;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__form {
+    margin-bottom: 16px;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__empty {
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+}
+

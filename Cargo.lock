@@ -3147,38 +3147,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mini-reddit-app"
-version = "0.1.0"
-dependencies = [
- "gstd",
- "sails-rs",
- "session-service",
-]
-
-[[package]]
-name = "mini-reddit-client"
-version = "0.1.0"
-dependencies = [
- "mini-reddit-app",
- "mockall",
- "sails-client-gen",
- "sails-idl-gen",
- "sails-rs",
-]
-
-[[package]]
-name = "mini-reddit-vara"
-version = "0.1.0"
-dependencies = [
- "mini-reddit-app",
- "mini-reddit-client",
- "mini-reddit-vara",
- "sails-idl-gen",
- "sails-rs",
- "tokio",
-]
-
-[[package]]
 name = "miniz_oxide"
 version = "0.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5812,6 +5780,38 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+
+[[package]]
+name = "vibepost"
+version = "0.1.0"
+dependencies = [
+ "sails-idl-gen",
+ "sails-rs",
+ "tokio",
+ "vibepost",
+ "vibepost-app",
+ "vibepost-client",
+]
+
+[[package]]
+name = "vibepost-app"
+version = "0.1.0"
+dependencies = [
+ "gstd",
+ "sails-rs",
+ "session-service",
+]
+
+[[package]]
+name = "vibepost-client"
+version = "0.1.0"
+dependencies = [
+ "mockall",
+ "sails-client-gen",
+ "sails-idl-gen",
+ "sails-rs",
+ "vibepost-app",
+]
 
 [[package]]
 name = "w3f-bls"
