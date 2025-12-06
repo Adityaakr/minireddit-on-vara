@@ -147,13 +147,15 @@ npm run dev
 1. **Import Project** to Vercel
 2. **Set Root Directory**: `frontend`
 3. **Add Environment Variables**:
+- `VITE_PROGRAM_ID=0x0617121506174a7eb159967337d86488e68fafa085d697c2577b98e3b5d93398`
+- `VITE_NODE_ADDRESS=wss://testnet.vara.network`
    - `VITE_NODE_ADDRESS`
    - `VITE_PROGRAM_ID`
    - `VITE_PINATA_API_KEY`
    - `VITE_PINATA_SECRET_KEY`
    - `VITE_PINATA_JWT`
    - `VITE_PINATA_GATEWAY`
-4. **Deploy**
+5. **Deploy**
 
 See `VERCEL_DEPLOYMENT.md` for detailed instructions.
 
