@@ -81,7 +81,13 @@ vibepost/
 │   │   ├── components/    # Reusable components
 │   │   └── utils/         # Utilities (IPFS, etc.)
 │   └── package.json
-├── vibepost.idl           # Interface definition (auto-generated)
+├── target
+    ├── ...
+    └── wasm32-gear
+        └── release
+            ├── vibepost.wasm       <---- this is our built .wasm file
+            ├── vibepost.opt.wasm   <---- this is optimized .wasm file
+            └── vibepost.idl        <---- this is our application interface .idl file
 └── Cargo.toml            # Workspace configuration
 ```
 
@@ -107,8 +113,11 @@ cd vibepost
 cargo build --release
 
 # Output files:
-# - vibepost.idl (Interface definition)
-# - target/wasm32-gear/release/vibepost.opt.wasm (Optimized WASM)
+#wasm32-gear
+        └── release
+            ├── vibepost.wasm       <---- this is our built .wasm file
+            ├── vibepost.opt.wasm   <---- this is optimized .wasm file
+            └── vibepost.idl        <---- this is our application interface .idl file
 ```
 
 ### 3. Deploy Contract
