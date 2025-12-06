@@ -6,6 +6,8 @@ node_modules/
 # Ignore all markdown files except README.md
 *.md
 !README.md
+**/*.md
+!README.md
 
 # Environment files
 frontend/.env
