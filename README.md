@@ -1,4 +1,4 @@
-# Lumio Social - Decentralized Open Social Network on Vara
+# Lumio Social - Decentralized Social Network on Vara
 
 A decentralized social media platform built on the Vara Network where users can create posts, comment, upvote, and earn $VIBES rewards for their engagement.
 
