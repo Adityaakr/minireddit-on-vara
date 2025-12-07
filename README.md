@@ -1,4 +1,4 @@
-# Lumio Social - Decentralized Social Network on Vara
+# Lumio Social - Next gen SocialFi app on Vara
 
 A decentralized social media platform built on the Vara Network where users can create posts, comment, upvote, and earn $VIBES rewards for their engagement.
 
