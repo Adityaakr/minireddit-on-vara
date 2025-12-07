@@ -381,10 +381,10 @@ impl MiniRedditService {
     }
 }
 
-pub struct VibePostProgram(());
+pub struct LumioSocialProgram(());
 
 #[sails_rs::program]
-impl VibePostProgram {
+impl LumioSocialProgram {
     // Program constructor
     pub fn new(config: Config) -> Self {
         unsafe {

@@ -1,8 +1,8 @@
-# VibePost - Decentralized Open Social Network on Vara
+# Lumio Social - Decentralized Open Social Network on Vara
 
 A decentralized social media platform built on the Vara Network where users can create posts, comment, upvote, and earn $VIBES rewards for their engagement.
 
-![VibePost](https://img.shields.io/badge/VibePost-Vara%20Network-green)
+![Lumio Social](https://img.shields.io/badge/Lumio%20Social-Vara%20Network-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## ✨ Features
@@ -37,7 +37,7 @@ A decentralized social media platform built on the Vara Network where users can 
 ┌─────────────────────────────────────────────────────────────┐
 │                    Vara Network (Blockchain)                │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │         VibePost Smart Contract (Rust/Sails)         │  │
+│  │      Lumio Social Smart Contract (Rust/Sails)        │  │
 │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │  │
 │  │  │ MiniReddit   │  │   Session    │  │  State   │  │  │
 │  │  │  Service     │  │   Service    │  │  Query   │  │  │
@@ -70,7 +70,7 @@ A decentralized social media platform built on the Vara Network where users can 
 ## 📦 Project Structure
 
 ```
-vibepost/
+lumio-social/
 ├── app/                    # Smart contract (Sails)
 │   ├── src/lib.rs         # Main contract logic
 │   └── Cargo.toml
@@ -85,9 +85,9 @@ vibepost/
     ├── ...
     └── wasm32-gear
         └── release
-            ├── vibepost.wasm       <---- this is our built .wasm file
-            ├── vibepost.opt.wasm   <---- this is optimized .wasm file
-            └── vibepost.idl        <---- this is our application interface .idl file
+            ├── lumio-social.wasm       <---- this is our built .wasm file
+            ├── lumio-social.opt.wasm   <---- this is optimized .wasm file
+            └── lumio-social.idl        <---- this is our application interface .idl file
 └── Cargo.toml            # Workspace configuration
 ```
 
@@ -102,8 +102,8 @@ vibepost/
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/vibepost.git
-cd vibepost
+git clone https://github.com/yourusername/lumio-social.git
+cd lumio-social
 ```
 
 ### 2. Build Smart Contract
@@ -115,16 +115,16 @@ cargo build --release
 # Output files:
 #wasm32-gear
         └── release
-            ├── vibepost.wasm       <---- this is our built .wasm file
-            ├── vibepost.opt.wasm   <---- this is optimized .wasm file
-            └── vibepost.idl        <---- this is our application interface .idl file
+            ├── lumio-social.wasm       <---- this is our built .wasm file
+            ├── lumio-social.opt.wasm   <---- this is optimized .wasm file
+            └── lumio-social.idl        <---- this is our application interface .idl file
 ```
 
 ### 3. Deploy Contract
 
 1. Go to [Gear IDEA](https://idea.gear-tech.io/)
 2. Connect your wallet
-3. Upload `target/wasm32-gear/release/vibepost.opt.wasm`
+3. Upload `target/wasm32-gear/release/lumio-social.opt.wasm`
 4. Copy the Program ID
 
 ### 4. Setup Frontend
@@ -173,7 +173,7 @@ See `VERCEL_DEPLOYMENT.md` for detailed instructions.
 ### Post Creation Flow
 1. User writes post (max 500 chars) and optionally uploads image
 2. Image uploaded to IPFS via Pinata
-3. Transaction sent to VibePost contract
+3. Transaction sent to Lumio Social contract
 4. Contract validates and stores post
 5. User earns 50 $VIBES (tracked locally)
 6. Post appears in feed

@@ -4,7 +4,7 @@ function ApiLoader() {
   return (
     <div className={styles.loader}>
       <div className={styles.spinner}></div>
-      <p className={styles.text}>Loading VibePost</p>
+      <p className={styles.text}>Loading Lumio Social</p>
     </div>
   );
 }

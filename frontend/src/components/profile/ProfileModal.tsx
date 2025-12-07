@@ -185,7 +185,7 @@ export function ProfileModal({ isOpen, onClose, onUpdate, currentProfile, accoun
                 maxLength={50}
                 disabled={loading || externalLoading}
               />
-              <p className="profile-modal__hint">This will be your display name on VibePost</p>
+              <p className="profile-modal__hint">This will be your display name on Lumio Social</p>
             </div>
 
             <div className="profile-modal__field">

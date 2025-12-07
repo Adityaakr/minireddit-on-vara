@@ -14,7 +14,7 @@ function Logo() {
     >
       <img 
         src={VibeLogo} 
-        alt="VibePost" 
+        alt="Lumio Social" 
         style={{
           height: 80,
           width: 'auto',

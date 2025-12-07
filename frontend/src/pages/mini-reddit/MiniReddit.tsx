@@ -1392,11 +1392,11 @@ export function MiniReddit() {
             <circle cx="11" cy="11" r="8"/>
             <path d="m21 21-4.35-4.35"/>
           </svg>
-          <input type="text" placeholder="Search VibePost" />
+          <input type="text" placeholder="Search Lumio Social" />
         </div>
 
         <div className="mini-reddit__sidebar-card">
-          <h3>About VibePost</h3>
+          <h3>About Lumio Social</h3>
           <p>A decentralized social network built on Vara. Get rewards. All posts live forever.</p>
           {account && (() => {
             const contractAddress = ENV.PROGRAM_ID;
@@ -1463,7 +1463,7 @@ export function MiniReddit() {
             <div className="mini-reddit__trend-meta">
               <span>Trending · Crypto</span>
             </div>
-            <div className="mini-reddit__trend-title">#VibePost</div>
+            <div className="mini-reddit__trend-title">#LumioSocial</div>
             <div className="mini-reddit__trend-count">{posts.reduce((sum, p) => sum + p.upvotes, 0)} vibes</div>
           </div>
         </div>
@@ -1472,7 +1472,7 @@ export function MiniReddit() {
           <button type="button">Terms of Service</button>
           <button type="button">Privacy Policy</button>
           <button type="button">About</button>
-          <span>© 2025 VibePost</span>
+          <span>© 2025 Lumio Social</span>
         </div>
       </aside>
 
